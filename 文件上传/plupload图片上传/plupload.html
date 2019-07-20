@@ -1,0 +1,335 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <style>
+        .trip-uploader .webuploader-container {
+            float: left;
+            position: relative;
+            width: 20%;
+            display: block;
+            line-height: 1.4;
+            background: #fff;
+            border: 1px dashed #D2D1D6;
+            border-radius: 6px;
+            color: #ccc;
+            padding: 15px 0;
+            font-size: 13px;
+            text-align: center;
+            margin: 4px;
+            cursor: pointer;
+        }
+
+        .webuploader-pick {
+            width: 100%;
+            display: block;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .trip-uploader .webuploader-container .icon-plus {
+            width: 32px;
+            height: 32px;
+            display: block;
+            margin: 10px auto;
+            background: url(/public/images/upimagedefault.png) no-repeat;
+            background-size: 32px;
+        }
+
+        .upload-btn {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 98%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .file-item {
+            width: 120px;
+            height: 120px;
+            float: left;
+            position: relative;
+            margin: 0 0 10px;
+            padding: 4px;
+            padding: 4px;
+            line-height: 1.42857143;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            -webkit-transition: border .2s ease-in-out;
+            -o-transition: border .2s ease-in-out;
+            transition: border .2s ease-in-out;
+        }
+
+        .fancybox {
+            display: block;
+            overflow: hidden;
+            background: #eee;
+            height: 120px;
+        }
+
+        .file-item img {
+            height: 110px;
+        }
+
+        .file-item .progress {
+            position: absolute;
+            right: 4px;
+            bottom: 4px;
+            left: 4px;
+            height: 4px;
+            overflow: hidden;
+            z-index: 15;
+            margin: 0;
+            padding: 0;
+            border-radius: 0;
+            background: 0 0;
+        }
+
+        .file-item .progress span {
+            display: block;
+            overflow: hidden;
+            width: 0;
+            height: 100%;
+            background: url(/public/images/progress.png) repeat-x #06BD01;
+            -webit-transition: width .2s linear;
+            -moz-transition: width .2s linear;
+            -o-transition: width .2s linear;
+            -ms-transition: width .2s linear;
+            transition: width .2s linear;
+            -webkit-animation: progressmove 2s linear infinite;
+            -moz-animation: progressmove 2s linear infinite;
+            -o-animation: progressmove 2s linear infinite;
+            -ms-animation: progressmove 2s linear infinite;
+            animation: progressmove 2s linear infinite;
+            -webkit-transform: translateZ(0);
+        }
+    </style>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8">
+    <title>添加章节</title>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <!-- <script>
+      (function () {
+        if (window !== window.top) {
+          window.top.location.href = 'http://www.818tu.com';
+        }
+      })();
+    </script> -->
+
+    <!-- bootstrap & fontawesome -->
+
+
+
+
+
+
+
+
+    <!-- page specific plugin styles -->
+    <script src="__PUBLIC__/admin/js/jquery.min.js"></script>
+
+</head>
+
+<body class="no-skin">
+
+    <!-- #section:basics/navbar.layout -->
+    <include file="./Public/gong/title.html" />
+
+    <div class="main-container" id="main-container">
+        <script type="text/javascript">
+            try {
+                ace.settings.check('main-container', 'fixed')
+            } catch (e) {}
+        </script>
+
+        <div id="sidebar" class="sidebar responsive">
+            <script type="text/javascript">
+                try {
+                    ace.settings.check('sidebar', 'fixed')
+                } catch (e) {}
+            </script>
+
+            <include file="./Public/gong/list.html" />
+
+
+            <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+                <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left"
+                    data-icon2="ace-icon fa fa-angle-double-right"></i>
+            </div>
+
+            <script type="text/javascript">
+                try {
+                    ace.settings.check('sidebar', 'collapsed')
+                } catch (e) {}
+            </script>
+        </div>
+
+        <!-- /section:basics/sidebar -->
+        <div class="main-content">
+
+
+            <div class="breadcrumbs" id="breadcrumbs">
+                <script type="text/javascript">
+                    try {
+                        ace.settings.check('breadcrumbs', 'fixed')
+                    } catch (e) {}
+                </script>
+
+      
+
+                <!-- /section:basics/content.searchbox -->
+            </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-3">本次章节内容</label>
+                                    <div class="col-sm-6">
+                                        <form id="form1" runat="server">
+                                            <div>
+                                                <div class="trip-uploader" style="height: 160px;">
+                                                    <div class="uploader-images-list">
+                                                    </div>
+                                                    <div class="webuploader-container">
+                                                        <div id="coverPicker"
+                                                            class="webuploader-pick webuploader-pick-hover"
+                                                            style="position: relative;">
+                                                            <i class="icon icon-plus"></i>上传图片<br />
+                                                            (最多N张)
+                                                        </div>
+                                                        <div id="imgupload" class="upload-btn"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+
+                                <div class="clearfix form-actions">
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <button type="submit" class="btn btn-info"
+                                            data-bind="click: submit, disable: submitting">保存</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <script type="text/javascript">
+                                //监听选值
+                                $('#s1').change(function (event) {
+                                    var $type_id = $(this).val();
+                                    $('#s2').empty();
+
+                                    $.post('/admin/cartoon/get_chartoon', {
+                                        'type_id': $type_id
+                                    }, function (data) {
+                                        $('#s2').append('<option value="">---请选择---</option>')
+                                        if (data.status == 1) {
+                                            $.each(data.data, function (key, val) {
+                                                $('#s2').append('<option value="' + val.id +
+                                                    '">' + val.name + '</option>');
+                                            });
+                                        }
+                                    }, 'json');
+                                });
+                                $('#r2').click(function (event) {
+                                    $('#goldshow').css('display', 'block');
+                                    //alert(1);
+                                });
+                                $('#r1').click(function (event) {
+                                    $('#goldshow').css('display', 'none');
+                                    //alert(1);
+                                });
+                            </script>
+
+    <!-- production -->
+    <script type="text/javascript" src="__PUBLIC__/admin/js/plupload.full.min.js"></script>
+    <script>
+        var $list = $(".uploader-images-list");
+        var uploader = new plupload.Uploader({ //实例化一个plupload上 传对象
+            browse_button: 'imgupload',
+            runtimes: 'html5,flash,silverlight,html4',
+            url: '/admin/cartoon/uploadimg',
+            flash_swf_url: '"__PUBLIC__/admin/js/Moxie.swf',
+            silverlight_xap_url: '"__PUBLIC__/admin/js/Moxie.xap',
+            filters: {
+                mime_types: [ //只允许上传图片文件
+                    {
+                        title: "图片文件",
+                        extensions: "jpg,gif,png"
+                    }
+                ]
+            },
+            prevent_duplicates: !1,
+            max_file_size: '10mb',
+            chunk_size: '1mb', //分片上传一定要注意压缩的大小
+            //, resize: { width: 320, height: 240, quality: 90 }
+            init: {
+                PostInit: function (a) {
+                    //  console.log("初始化完毕");
+                },
+                FilesAdded: function (uder, files) {
+                    // console.log("添加进队列");
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        appendimg(file.id);
+                    }
+                    uder.start();
+                },
+                BeforeUpload: function (uder, files) {
+                    // console.log("开始上传");
+                },
+                UploadProgress: function (uder, file) {
+                    //console.log("进度：[百分比:" + file.percent + "，状态：" + file.status + ",原始大小：" + file.origSize + ",已传：" + file.loaded + "]");
+                    progress(file.id, file.percent);
+                },
+                UploadFile: function (uder) {
+                    // console.log(uder.id + "开始上传");
+                },
+                FileUploaded: function (uder, file, resObject) {
+
+                    var result = resObject.response;
+
+                    //console.log(file.id);
+                    imgurl = "__PUBLIC__/Uploads/cart/" + JSON.parse(result).data.img_name;
+                    ysurl = JSON.parse(result).data.img_name;
+                    var $fileitem = $("." + file.id)
+                    $fileitem.find("img").attr("src", imgurl);
+                    // $fileitem.find("input").attr("val", JSON.parse(result).data
+                    // .img_name);
+                    $fileitem.append("<input type='hidden' name='img[]' value='" + ysurl + "'>");
+                    //移除进度条
+                    $fileitem.find(".progress").remove();
+                },
+                ChunkUploaded: function (a, b, c) {
+                    // console.log("小片上传完成后");
+                },
+                UploadComplete: function (uder, files) {
+                    // alert("上传完毕");
+                },
+                Error: function () {
+                    alert("上传失败请稍后再试");
+                }
+            }
+
+        });
+        uploader.init(); //初始化
+
+        function appendimg(id, imgurl) {
+            var html = ' <div  class="' + id + ' file-item"><a class="fancybox"> <img /> </a> </div>';
+            $(".uploader-images-list").append(html);
+        }
+
+        function progress(id, percent) {
+            var c = $list.find("." + id);
+            var d = c.find(".progress span");
+            d.length || (d = $('<p class="progress"><span></span></p>').appendTo(c).find("span"));
+            d.css("width", percent + "%")
+        }
+    </script>
+</body>
+
+</html>
