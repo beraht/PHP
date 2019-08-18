@@ -2,22 +2,22 @@
 namespace App\Lib\Upload;
 use App\Lib\Upload\Base;
 
-class Video extends Base{
+class Image extends Base{
 
     /**
      * fileType
      */
-    public $fileType = "video";
+    public $fileType = "image";
     /**
      * 限制文件大小
      */
-    public $videoSize = 100;
+    public $imgSize = 5;
     /**
      * 限制文件的格式
      */
     public $fileExtTypes = [
-        'mp4',
-        'x-flv',
+        'png',
+        'jpeg',
     ];
 
 
