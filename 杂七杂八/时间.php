@@ -8,14 +8,6 @@ $end = mktime(23,59,59,date('m'),date('t'),date('Y'));
 //获取今日14.00的时间戳
 $to_start = strtotime(date('Y-m-d') . '14:00:00');
 
- //获取当天14：00 到
-        
- $begin = strtotime(date('Y-m-d'). ' 14:00:00');
- //第二天7：00时间段 需要计算的订单
- $end = strtotime(date('Y-m-d',strtotime('+1 days')). ' 7:00:00');
-
-
-
 /**
 * 根据时间戳返回星期几
 * @param string $time 时间戳
