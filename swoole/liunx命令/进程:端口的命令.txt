@@ -1,0 +1,4 @@
+ps -aux | grep process.php  查看指定文件的进程
+netstart -anp | grep 9555   查看端口
+pstree -p 342   查看父进程下面的子进程
+ps aft | grep http_server.php    查看运行文件的所有进程的上下级关系

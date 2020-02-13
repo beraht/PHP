@@ -1,7 +1,7 @@
 <?php
 use Swoole\Http\Server;
 
-$http = new Server("0.0.0.0", 9506);
+$http = new Server("0.0.0.0", 9555);
 
 $http->set(
     [
