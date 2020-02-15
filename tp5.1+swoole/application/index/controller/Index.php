@@ -20,20 +20,33 @@ class Index
      */
     public function sms(){
         $phone = request()->get('phone_num',0,'intval');
-        if(empty($phone)){
+        if(empty($phone)||!preg_match("/^1[345678]{1}\d{9}$/",$phonenumber)){
            return Util::show(config('code.error'),'请输入正确的手机号');
         }
+
+        //生成随机字符串
+        $code = mt_rand(100000,999999);
 
         try{
 
            $res = Sms::sendSms($phone,$code);
-           print_r($res);
+
         }catch(\Exception $e){
 
-            $res = $e->getMessage();
+            return Util::show(config('code.sms_error'),'短信发送失败');
 
         }
-            return $res;
+        
+        if($res->Code === "ok"){
+            
+            $redis = new Swoole\Coroutine\Redis();
+            $redis->connect(config('redis.host'),config('redis.port'));
+            $redis->set("sms_".$phone,$code,config('redis.out_time'));
+            return Util::show(config('code.success'),'短信发送成功');
+
+        }else{
+            return Util::show(config('code.sms_error'),'短信发送失败');
+        }
 
     }
 }
