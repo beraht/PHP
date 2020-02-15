@@ -10,8 +10,8 @@ class Login
      */
     public function login()
     {
-        $phone = intval($_POST['phone_num']);
-        $code = intval($_POST['code']);
+        $phone = intval($_GET['phone_num']);
+        $code = intval($_GET['code']);
         
         if(empty($phone) || empty($code)){
 

@@ -55,7 +55,7 @@ class Predis{
      * 获取
      */
 
-    public function get($key, $value, $time = 0 ){
+    public function get($key){
         
         if(!$key){
             return '';
