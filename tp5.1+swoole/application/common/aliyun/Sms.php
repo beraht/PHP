@@ -84,7 +84,7 @@ class Sms
         $request->setSignName("kuaihuoya网站");
 
         // 必填，设置模板CODE，应严格按"模板CODE"填写, 请参考: https://dysms.console.aliyun.com/dysms.htm#/develop/template
-        $request->setTemplateCode("kuaihuoya.top");
+        $request->setTemplateCode("SMS_183790702");
 
         // 可选，设置模板参数, 假如模板中存在变量需要替换则为必填项
         $request->setTemplateParam(json_encode(array(  // 短信模板中字段的值
