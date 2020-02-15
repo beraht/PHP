@@ -4,7 +4,7 @@ namespace app\common\redis;
 /**
  * php 操作Redis
  */
-class predis{
+class Predis{
 
     public $redis = "";
 

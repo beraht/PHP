@@ -2,6 +2,7 @@
 namespace app\index\controller;
 use app\common\aliyun\Sms;
 use app\common\Util;
+use app\common\redis\Predis;
 class Index
 {
     public function index()
@@ -37,12 +38,10 @@ class Index
             return Util::show(config('code.sms_error'),'短信发送失败');
 
         }
-        
-        if($res->Code === "ok"){
 
-            $redis = new Swoole\Coroutine\Redis();
-            $redis->connect(config('redis.host'),config('redis.port'));
-            $redis->set("sms_".$phone,$code,config('redis.out_time'));
+        if($res->Code === "OK"){
+
+            Predis::getInstance()->set("sms_".$phone,$code,config('redis.out_time'));
             return Util::show(config('code.success'),'短信发送成功');
 
         }else{
