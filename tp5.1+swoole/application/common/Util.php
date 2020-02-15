@@ -17,7 +17,7 @@ class Util{
             'data' => $data,
         ];
         
-        echo json_encode($result);
+        return json_encode($result);
     }
     
 }

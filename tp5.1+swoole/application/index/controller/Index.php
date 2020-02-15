@@ -1,6 +1,7 @@
 <?php
 namespace app\index\controller;
 use app\common\aliyun\Sms;
+use app\common\Util;
 class Index
 {
     public function index()
@@ -20,7 +21,7 @@ class Index
     public function sms(){
         $phone = request()->get('phone_num',0,'intval');
         if(empty($phone)){
-           return app\common\Util::show(config('code.error'),'请输入正确的手机号');
+           return Util::show(config('code.error'),'请输入正确的手机号');
         }
 
         try{
