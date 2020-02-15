@@ -1,91 +1,93 @@
 <?php
-//实例化 http_server服务, 监听多个地址 , 端口号是9501
-$http = new Swoole\Http\Server("0.0.0.0", 8811);
-
+use Swoole\Http\Server;
 /**
- * 类似于nginx 和 apache 一样,对静态文件和动态文件的处理
+ * 如何使 tp5.1 完全支持swoole
+ * 当访问 : xxx.com/index/index/test 时
+ *  1.先触发事件 request , 在进入request回调当中
+ *  2.tp的每一个请求首先都会进入到index.php
+ * 
+ *  3.使用onWorkerStart事件(此事件在Worker进程/Task进程启动时发生。这里创建的对象可以在进程生命周期内使用)
+ *      a.可以通过$server->taskworker属性来判断当前是Worker进程还是Task进程
+*       b.设置了worker_num和task_worker_num超过1时，每个进程都会触发一次onWorkerStart事件，可通过判断$worker_id区分不同的工作进程
+
+ *  4.为了让tp5完美支持swoole ,需要在每一次启动服务之前,tp的核心代码,加载到swoole进程onWorkerStart事件当中,
+ *      a.当后面启动了多个进程,每个进程都已经加载了tp核心代码了.
+ *      b.这样做的目的是,应用热加载,放入work进程中就启动了,
  */
+
+$http = new Server("0.0.0.0", 8811);
+
 $http->set(
-    
-   [
-    //开启静态文件请求处理功能
-    'enable_static_handler' => true,
-    //静态文件的路径
-    'document_root' => '/root/tp5/public/static', // v4.4.0以下版本, 此处必须为绝对路径
-    'worker_num' => 5,
-   ] 
+    [
+        'enable_static_handler' => true, //开启静态文件处理
+        'document_root' => "/home/tp5/public/static", //静态文件存放的目录
+        'worker_num' => 5, //开启服务时,直接开启了5个worke进程,随后进入WorkerStart事件
+    ]
 );
-//开启5个进程就将 tp5框架的内容载入到内存中
-$http->on('WorkerStart',function(swoole_server $server,$worker_id){
-      // 定义应用目录
-    define('APP_PATH', __DIR__ . '/../application/');
-    //加载框架引导文件
+//如果请求的静态文件,在指定的目录下找到,该文件,那么久不会在走下面的逻辑了.
+
+//此事件在Worker进程启动时发生
+$http->on('WorkerStart', function ($serv, $worker_id) {
+
+    echo "启动了一个workem进程: " . $worker_id . PHP_EOL;
+
+    //定义应用目录
+    define('APP_PATH',__DIR__.'/../application/');
+    // 加载基础文件
     require __DIR__ . '/../thinkphp/base.php';
+    // 执行应用并响应(不用去引入,因为只要加载核心库就行了,没必要去执行)
+    //Container::get('app')->run()->send();
 });
 
-/***************   上面走的是静态模式,下面走的PHP动态模式    *******************************/
+//请求进入
+$http->on('request', function ($request, $response)use($http) {
+    $uri = $request->server['request_uri'];
+    if ($uri == '/favicon.ico') {
+        $response->status(404);
+        $response->end();
+    }
+    $_SERVER = [];
+    if (isset($request->server)) {
+        foreach ($request->server as $k => $v) {
+            $_SERVER[strtoupper($k)] = $v;
+        }
+    }
+    if (isset($request->header)) {
+        foreach ($request->header as $k => $v) {
+            $_SERVER[strtoupper($k)] = $v;
+        }
+    }
 
-/* 
-*request标示监听请求的类型 , 
-* 回调函数里面 $request 表示请求的内容
-*            $response 表示响应的内容
-*/ 
-$http->on('request', function ($request, $response){
+    $_GET = [];
+    if (isset($request->get)) {
+        foreach ($request->get as $k => $v) {
+            $_GET[$k] = $v;
+        }
+    }
 
-   // if(!empty($_GET)){
-   //    unset($_GET);
-   // }
-   $_GET = [];   
-   //转换php 所需的超全局变量
-   if(isset($request->get)){
-      foreach($request->get as $k=>$v){
-         //获取的参数传给tp框架
-         $_GET[$k] = $v;
-      }
-   }
+    $_POST = [];
+    if (isset($request->post)) {
+        foreach ($request->post as $k => $v) {
+            $_POST[$k] = $v;
+        }
+    }
 
-   if(isset($request->header)){
-      foreach($request->header as $k=>$v){
-         $_SERVER[strtoupper($k)] = $v;
-      }
-   }
-   $_POST = []; 
-   if(isset($request->post)){
-      foreach($request->post as $k=>$v){
-         $_POST[$k] = $v;
-      }
-   }
-   ob_start();
-   //执行应用并响应
-   try{
-      \think\Container::get('app')->run()->send();
-   }catch(\Exception $e){
-      echo $e->getMessage();
-   }   
-   $res = ob_get_contents();
-   ob_end_clean();
-   $response->end($res);
+    //打开输出缓冲区，所有的输出信息不在直接发送到浏览器
+    // echo，并不一定会输出东西，而是保存在 buffer 里。
+    ob_start();
+    try {
+        // 执行应用并响应
+        \think\Container::get('app',[APP_PATH])->run()->send(); 
+    } catch (\Exception $e) {
+        echo $e->getMessage();
+    }
+
+    //获取缓冲器的内容
+    $res = ob_get_clean();
+    //响应给浏览器
+    $response->end($res);
+    $http->close();
 });
 
-//开始服务
 $http->start();
-
-
-
-/**
- * 在客户端 或者浏览器请求的方式
- * 
- * //动态方式请求
- * liunx 中 curl curl 127.0.0.1:8811/?m=2&type=3 携带参数访问
- * 浏览器中直接 xxx.com:8811/?m=2&type=3
- * 
- * //静态方式请求
- * liunx curl 127.0.0.1:8811/index.html
- * 浏览器中直接 xxx.com:8811/index.html 会获取对应的静态文件
- *            xxx.com:8811/ss/index.html 表示在swoole设置的指定路径下ss目录下的index.html
- */
-
-
-
-?>
 
