@@ -31,6 +31,7 @@ class http {
         $this->http->on("WorkerStart", [$this, 'onWorkerStart']);
         $this->http->on("request", [$this, 'onRequest']);
         $this->http->on("task", [$this, 'onTask']);
+        $this->http->on("finish", [$this, 'onFinish']);
         $this->http->on("close", [$this, 'onClose']);
 
         $this->http->start();
@@ -80,7 +81,10 @@ class http {
                 $_POST[$k] = $v;
             }
         }
-    
+        
+        //将服务的对象放入
+        $_SERVER['http_obj'] = $this->http;
+
         //打开输出缓冲区，所有的输出信息不在直接发送到浏览器
         // echo，并不一定会输出东西，而是保存在 buffer 里。
         ob_start();
@@ -104,10 +108,30 @@ class http {
      * @param $data  投递过来的数据
      */
     public function onTask($serv, $taskId, $workerId, $data) {
-        print_r($data);
-        // 耗时场景 10s
-        sleep(10);
+        try{
+
+            $res = app\common\aliyun\Sms::sendSms($data['phone'],$data['code']);
+ 
+         }catch(\Exception $e){
+ 
+             echo $e->getMessage();
+ 
+         }
+
+         print_r($res);
+
         return "on task finish"; // 告诉worker
+    }
+
+
+        /** 监听 onTask 并接收 返回的数据 
+     * @param $serv
+     * @param $taskId
+     * @param $data   onTask 返回的数据
+     */
+    public function onFinish($serv, $taskId, $data) {
+        echo "taskId:{$taskId}\n";
+        echo "finish-data-sucess:{$data}\n";
     }
 
 

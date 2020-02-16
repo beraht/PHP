@@ -1,0 +1,35 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Untitled Document</title>
+</head>
+<H1> websocket 客户端连接服务器 </H1>
+
+
+
+<body>
+    <script>
+        //websocket  地址
+        var  ws_url = "ws://111.229.163.26:8813";
+        //创建一个websocket 对象
+        var  ws = new WebSocket(ws_url);
+
+        //实例对象的onopen属性
+        ws.onopen = function() {
+        console.log("client：打开连接");
+        ws.send("client：hello，服务端");
+        };
+        ws.onmessage = function(e) {
+        console.log("client：接收到服务端的消息 " + e.data);
+        setTimeout(() => {
+            ws.close();
+        }, 5000);
+        };
+        ws.onclose = function(params) {
+        console.log("client：关闭连接");
+        };
+
+
+    </script>
+</body>
+</html>
