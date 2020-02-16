@@ -3,11 +3,11 @@ namespace app\index\controller;
 use app\common\aliyun\Sms;
 use app\common\Util;
 use app\common\redis\Predis;
-class Index
+use app\common\Common;
+class Index extends Common
 {
     public function index()
     {
-        print_r($_GET);
         return  "index/index/index" .'-'. time();
     }
 
