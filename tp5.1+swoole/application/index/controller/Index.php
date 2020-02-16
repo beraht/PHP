@@ -31,22 +31,16 @@ class Index
 
         //发送一个task任务
         $TaskData = [
-            'phone' => $phone,
-            'code'  => $code,
+             'method' => "smsTack",
+             'data'  => [
+                'phone' => $phone,
+                'code'  => $code,
+                ]
         ];
         //相当于 $thhp->task();
         $_SERVER['http_obj']->task($TaskData);
 
         return Util::show(config('code.success'),'短信发送成功');
-
-        // if($res->Code === "OK"){
-
-        //     Predis::getInstance()->set("sms_".$phone,$code,config('redis.out_time'));
-        //     return Util::show(config('code.success'),'短信发送成功');
-
-        // }else{
-        //     return Util::show(config('code.sms_error'),'短信发送失败');
-        // }
 
     }
 }

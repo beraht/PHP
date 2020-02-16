@@ -108,23 +108,18 @@ class http {
      * @param $data  投递过来的数据
      */
     public function onTask($serv, $taskId, $workerId, $data) {
-        try{
 
-            $res = app\common\aliyun\Sms::sendSms($data['phone'],$data['code']);
- 
-         }catch(\Exception $e){
- 
-             echo $e->getMessage();
- 
-         }
+        //分发 task 任务机制 ,让不同的任务, 走不同的逻辑
 
-         print_r($res);
-
-        return "on task finish"; // 告诉worker
+        $taskObj = new app\common\task\Task();
+        $method = $data['method'];
+        $res = $taskObj->$method($data['data']);
+        return $res; // 告诉worker
+        
     }
 
 
-        /** 监听 onTask 并接收 返回的数据 
+    /** 监听 onTask 并接收 返回的数据 
      * @param $serv
      * @param $taskId
      * @param $data   onTask 返回的数据

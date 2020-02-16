@@ -24,7 +24,7 @@ class Predis{
 
     private function __construct(){
         $this->redis = new \Redis(); //redis.so在全局路径下
-        $result = $this->redis->connect(config('redis.host'),config('redis.port'),config('redis.timeOut'));
+        $result = $this->redis->connect("127.0.0.1",6379,5);
         if($result == false){
             throw new \Exception('redis connect error');
         }
