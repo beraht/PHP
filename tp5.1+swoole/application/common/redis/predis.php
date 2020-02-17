@@ -65,5 +65,32 @@ class Predis{
 
     }
 
+    /**
+     * 向集合中添加数据
+     */
+    public function sadd($key,$value){
+
+        return $this->redis->sadd($key,$value);
+
+    }
+
+    /**
+     * 向集合中删除指定的数据
+     */
+    public function srem($key,$value){
+
+        return $this->redis->srem($key,$value);
+
+    }
+
+    /**
+     * 获取集合的数据
+     */
+    public function Smembers($key){
+
+        return $this->redis->SMEMBERS($key);
+
+    }
+
 
 }

@@ -23,8 +23,8 @@ class Ws {
             [
                 'enable_static_handler' => true, //开启静态文件处理
                 'document_root' => "/home/tp5/public/static", //静态文件存放的目录
-                'worker_num' => 5, //开启服务时,直接开启了5个worke进程,随后进入WorkerStart事件
-                'task_worker_num' => 5,
+                'worker_num' => 3, //开启服务时,直接开启了5个worke进程,随后进入WorkerStart事件
+                'task_worker_num' => 3,
             ]
         );
         $this->ws->on("open", [$this, 'onOpen']);
@@ -45,6 +45,8 @@ class Ws {
      * @param $request
      */
     public function onOpen($ws, $request) {
+        //记录下连接的用户
+        app\common\redis\Predis::getInstance()->sadd("live_open_fd",$request->fd);
         echo $request->fd . '用户进入' .PHP_EOL;
     }
 
@@ -102,6 +104,13 @@ class Ws {
             }
         }
     
+        $_FILES = [];
+        if (isset($request->files)) {
+            foreach ($request->files as $k => $v) {
+                $_FILES[$k] = $v;
+            }
+        }
+
         $_POST = [];
         if (isset($request->post)) {
             foreach ($request->post as $k => $v) {
@@ -163,7 +172,9 @@ class Ws {
      * @param $fd
      */
     public function onClose($ws, $fd) {
-        echo "clientid:{$fd}\n";
+       //删除关闭链接的用户
+       app\common\redis\Predis::getInstance()->srem("live_open_fd",$fd);
+       echo $fd . '用户退出' .PHP_EOL;
     }
 }
 
