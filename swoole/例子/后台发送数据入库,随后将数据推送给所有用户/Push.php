@@ -1,21 +1,38 @@
 <?php
-
+namespace app\admin\controller;
+use app\common\Util;
+use app\common\redis\Predis;
 class Live{
 
     /**
-     * 1.接收后台发送的数据
-     * 2.接收入库后,将数据发送给前台ws
+     * 接收数据并入库,随后推送
      */
     public function push(){
-        //接收所有数据
-        $data = $_POST;
-        //入库 
+        $data = $_GET;
+        print_r($data);
 
-        //处理(组织)好数据,发送给前台
+        //获取所有fd
+        $fds = Predis::getInstance()->Smembers("live_open_fd");
 
-        $_SERVER['http_obj']->push(2,'发送给ws的数据'); //发送给标识为2的客户端
+        //推送给所有的用户
+        //方案一(同步)
+        // foreach($fds as $fd){
+        //     $_SERVER['http_obj']->push($fd,"hello123heloo");
+        // }
 
+        //方案二(异步)
         
+        //发送一个task任务
+        $TaskData = [
+            'method' => "pushTack",
+            'data'  =>  $fds,
+        ];
+        
+        $_SERVER['http_obj']->task($TaskData);  //相当于 $thhp->task();
+        
+
+
+        return Util::show(1,'ok');
     }
 
 

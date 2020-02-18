@@ -36,7 +36,18 @@ class Task{
 
     }
 
+    /**
+     * 异步task推送任务
+     */
+    public function pushTack($data){
 
 
+        foreach($data as $fd){
+            $_SERVER['http_obj']->push($fd,"hello123heloo");
+        }
+
+
+
+    }
 
 }
