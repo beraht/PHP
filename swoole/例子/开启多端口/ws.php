@@ -48,6 +48,11 @@ class Ws {
      * @param $request
      */
     public function onOpen($ws, $request) {
+
+        //******************打印出当前服务器的参数(多端口有2ge) *******************/
+
+        var_dump($ws);
+
         //记录下连接的用户
         app\common\redis\Predis::getInstance()->sadd("live_open_fd",$request->fd);
         echo $request->fd . '用户进入' .PHP_EOL;
