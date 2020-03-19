@@ -1,0 +1,10 @@
+    /**
+     * @param $server
+     */
+    public function onStart($server) {
+        //设置主进程的名称
+        swoole_set_process_name("live_master");
+    }
+1. 设置主进程的名称
+
+2. 运行 reload.sh 脚本  sh reload.sh
